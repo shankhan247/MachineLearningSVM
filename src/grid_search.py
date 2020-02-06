@@ -13,8 +13,8 @@ itself should run 20 fold cross validation. That means that you are running 20 t
 import itertools
 from copy import deepcopy
 
-from parallelizer import Parallelizer
-from worker import run_experiment
+from .parallelizer import Parallelizer
+from .worker import run_experiment
 
 
 class GridSearchCV:

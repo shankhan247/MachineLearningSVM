@@ -5,10 +5,10 @@ the signature of the functions and composition of classes is pretty similar
 to sklearn's way of tuning hyperparameters.
 '''
 
-from grid_search import GridSearchCV
-from mnist import load_mnist
-from circle import load_circle
-from random_search import RandomSearchCV
+from .grid_search import GridSearchCV
+from .mnist import load_mnist
+from .circle import load_circle
+from .random_search import RandomSearchCV
 
 
 def run(estimator, search_type, tuned_parameters, inputs, targets, n_iter=5):
