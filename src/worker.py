@@ -12,6 +12,7 @@ experiment and the associated parameters for the estimator
 '''
 
 from sklearn.model_selection import cross_val_score
+import numpy as np
 
 
 def run_experiment(estimator, params, input_data, target_data) :
@@ -32,4 +33,9 @@ def run_experiment(estimator, params, input_data, target_data) :
         given in the function call. You should return a tuple of (params, mean_score, std_score)
     '''
 
-    raise NotImplementedError
+    scores = cross_val_score(estimator,input_data,target_data,cv=20)
+    mean_score = np.mean(scores)
+    std_score = np.std(scores)
+    t = (params,mean_score,std_score)
+
+    return t

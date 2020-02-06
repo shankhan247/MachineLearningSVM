@@ -16,8 +16,8 @@ itself should run 20 fold cross validation. That means that you are running 20 t
 import random
 from copy import deepcopy
 
-from .parallelizer import Parallelizer
-from .worker import run_experiment
+from parallelizer import Parallelizer
+from worker import run_experiment
 
 
 class RandomSearchCV:
@@ -73,4 +73,28 @@ class RandomSearchCV:
         :param targets: The targets/classes for the given input data
         '''
 
-        raise NotImplementedError
+        paral_array = []
+
+        for n in range(self.n_iter):
+            param_config = {} # declaring empty dictionary
+            for p in self.param_distributions:
+                rand = random.choice(self.param_distributions[p])
+                param_config.update({p: rand})
+            
+            new_estimator = deepcopy(self.estimator)
+            new_estimator.__init__(**param_config)
+
+            tup = (new_estimator,param_config,inputs,targets)
+            paral_array.append(tup)
+        
+        paral = Parallelizer(run_experiment)
+        self.cv_results = paral.parallelize(paral_array)
+
+
+
+            
+            
+
+
+
+

@@ -13,8 +13,8 @@ itself should run 20 fold cross validation. That means that you are running 20 t
 import itertools
 from copy import deepcopy
 
-from .parallelizer import Parallelizer
-from .worker import run_experiment
+from parallelizer import Parallelizer
+from worker import run_experiment
 
 
 class GridSearchCV:
@@ -64,7 +64,20 @@ class GridSearchCV:
         :param targets: The targets/classes for the given input data
         '''
 
-        raise NotImplementedError
+        perms = self.generate_all_permutations(self.tuned_parameters)
+        paral_array = []
+
+        for p in perms:
+            param_config = p
+
+            new_estimator = deepcopy(self.estimator)
+            new_estimator.__init__(**param_config)
+
+            tup = (new_estimator,param_config,inputs,targets)
+            paral_array.append(tup)
+        
+        paral = Parallelizer(run_experiment)
+        self.cv_results = paral.parallelize(paral_array)
 
     def generate_all_permutations(self, tuned_parameters):
         '''
@@ -82,6 +95,15 @@ class GridSearchCV:
         :return: Returns all possible mutations as a list of dictionaries. Each dictionary should
             contain parameter_type and parameter_value pairs.
         '''
+        # script derived from following resource: 
+        # https://codereview.stackexchange.com/questions/171173/list-all-possible-permutations-from-a-python-dictionary-of-lists
 
-        raise NotImplementedError
+        types, values = zip(*tuned_parameters.items())
+
+        pairs = []
+        for v in itertools.product(*values):
+            pair = dict(zip(types,v))
+            pairs.append(pair)
+
+        return pairs
 
